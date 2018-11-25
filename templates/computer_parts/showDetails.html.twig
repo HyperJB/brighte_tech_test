@@ -1,0 +1,23 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Parts{% endblock %}
+
+{% block body %}
+    <div class="container">
+        <h1>Product Details</h1>
+        <div class="row">
+            <div class="col-md-6">
+                <img src="/images/uploads/{{ part.productpicture }}" alt="{{ part.productpicture }}" width="100%" />
+            </div>
+            <div class="col-md-6">
+                <h2>{{ part.productName }}</h2>
+                <p><strong>Price</strong> : ${{ part.productPrice }}</p>
+                <p>
+                    <strong>Description</strong><br />
+                    {{ part.productDescription }}
+                </p>
+            </div>
+        </div>
+        <a href="{{ url('product_list') }}" class="btn btn-success">Go Back</a>
+    </div>
+{% endblock %}

@@ -1,0 +1,40 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}
+    List Products
+{% endblock %}
+
+{% block body %}
+<div id="parts" class="container example-wrapper">
+    <h1>Product List</h1>
+
+    <div>
+        <a href="{{ url('product_create') }}" class="btn btn-primary">Add New</a>
+        <a href="{{ url('product_list', {type:'Name'}) }}" class="btn btn-primary">Sort by name</a>
+        <a href="{{ url('product_list', {type:'Price'}) }}" class="btn btn-primary">Sort by price</a>
+    </div>
+    <br />
+
+    {% for part in parts %}
+
+        <div class="row">
+            <div class="col-md-2"><a href="{{ url('product_details', {id:part.id}) }}"><img src="/images/uploads/{{ part.productpicture }}" width="100%" /></a></div>
+            <div class="col-md-7"><a href="{{ url('product_details', {id:part.id}) }}">{{ part.productName }}</a></div>
+            <div class="col-md-1">${{ part.productPrice }}</div>
+            <div class="col-md-1"><a href="{{ url('product_edit', {id:part.id}) }}" class="btn btn-warning">Edit</a></div>
+            <div class="col-md-1"><a href="#" class="btn btn-danger delete-part" data-id="{{ part.id }}">Delete</a></div>
+        </div>
+
+    {% endfor %}
+    
+    <div class="navigation">
+        {{ knp_pagination_render(parts) }}
+    </div>    
+</div>
+{% endblock %}
+
+{% block javascripts %}
+
+    <script src="/js/main.js"></script>
+
+{% endblock %}

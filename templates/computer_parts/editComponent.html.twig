@@ -1,0 +1,19 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Edit Product{% endblock %}
+
+{% block body %}
+
+    <div class="container">
+        <h1>Edit Product</h1>
+        
+        <img src="{{ current_image }}" width="200" class="img-responsive" alt="current image" />
+
+        {{ form_start(form) }}
+        {{ form_widget(form) }}
+        {{ form_end(form) }}
+
+        <a href="{{ url('product_list') }}" class="btn btn-success">Back</a>
+    </div>
+
+{% endblock %}

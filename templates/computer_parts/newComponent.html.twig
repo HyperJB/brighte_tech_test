@@ -1,0 +1,17 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}New Part{% endblock %}
+
+{% block body %}
+
+    <div class="container">
+        <h1>New part</h1>
+        
+        {{ form_start(form) }}
+        {{ form_widget(form) }}
+        {{ form_end(form) }}
+
+        <a href="{{ url('product_list') }}" class="btn btn-success">Back</a>
+    </div>
+
+{% endblock %}
