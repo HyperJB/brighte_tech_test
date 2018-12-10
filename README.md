@@ -55,7 +55,6 @@ Only had 25/11/2018 (Sunday) and 26/11/2018 (Monday) to do this and spent around
 
 Any compromises/shortcuts you made due to time considerations.
 ---
-- Done most logic in one controller (would have separated some of the logic if had more time)
 - Used KnpPaginatorBundle for pagination
 - Almost no styling on page, only used a few styling with the use of Bootstrap
 - Didn't add any messages such as "item has been added","item deleted" etc.
