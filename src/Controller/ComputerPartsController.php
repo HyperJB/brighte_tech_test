@@ -4,167 +4,61 @@ namespace App\Controller;
 
 // Imports
 use App\Entity\ComputerParts;
+use App\Utils\ThePagination;
+use App\Utils\CreateEditForm;
 
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
-
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
-
-use Symfony\Component\Form\Extension\Core\Type\TextType;
-use Symfony\Component\Form\Extension\Core\Type\Integer;
-use Symfony\Component\Form\Extension\Core\Type\TextareaType;
-use Symfony\Component\Form\Extension\Core\Type\FileType;
-use Symfony\Component\Form\Extension\Core\Type\SubmitType;
-
 use Symfony\Component\HttpFoundation\File\UploadedFile;
+
 
 class ComputerPartsController extends Controller
 {
     /**
      * @Route("/", name="product_list", methods={"GET"})
      */
-    public function index(Request $request)
-    {
+    public function index(Request $request) {
 
+        // Get request for sorting
         $sortType = (!empty($_GET['type']) ? $_GET['type'] : 'Name');
 
-        // Retrieve the entity manager of Doctrine
-        $entityManager = $this->getDoctrine()->getManager();
-        
-        // Get some repository of data, in our case we have an Parts entity
-        $partsRepository = $entityManager->getRepository(ComputerParts::class);
-                
-        // Find all the data on the Parts table, filter your query as you need
-        $allPartsQuery = $partsRepository->createQueryBuilder('p')
-            ->orderBy('p.product' . $sortType, 'ASC')
-            ->getQuery();
-        
-        /* @var $paginator \Knp\Component\Pager\Paginator */
-        $paginator  = $this->get('knp_paginator');
-        
-        // Paginate the results of the query
-        $parts = $paginator->paginate(
-            // Doctrine Query, not results
-            $allPartsQuery,
-            // Define the page parameter
-            $request->query->getInt('page', 1),
-            // Items per page
-            10
-        );
+        // Set pagination
+        $parts = ThePagination::setup($this, $sortType, $request);
 
         return $this->render('computer_parts/index.html.twig', 
             array(
-                'parts'   => $parts,
+                'parts' => $parts,
             )
         );
+        
     }
 
     /**
      * @Route("/product-create", name="product_create", methods={"GET","POST"})
      */
     public function newComponent(Request $request) {
+        
         $part = new ComputerParts();
 
-        $form = $this->createFormBuilder($part)
-
-            // Product Name Field
-            ->add('productName', TextType::class, 
-                array(
-                    'label' => 'Name', 
-                    'required' => true,
-                    'attr'=> array(
-                        'class' => 'form-control'
-                    )
-                )
-            )
-
-            // Product Price Field
-            ->add('productPrice', TextType::class,
-                array(
-                    'label' => 'Price', 
-                    'required' => true,
-                    'attr' => array(
-                        'class' => 'form-control'
-                    )
-                )
-            )
-
-            // Product Description Field
-            ->add('productDescription', TextareaType::class,
-                array(
-                    'label' => 'Description', 
-                    'required' => true,
-                    'attr' => array(
-                        'class' => 'form-control'
-                    )
-                )
-            )
-
-            // Product Picture Field
-            ->add('productPicture', FileType::class, 
-                array(
-                    'label' => 'Picture', 
-                    'required' => true,
-                    'attr' => array(
-                        'class' => 'form-control'
-                    )
-                )
-            )
-
-            // Save Button
-            ->add('save', SubmitType::class,
-                array(
-                    'label' => 'Create', 
-                    'attr' => array(
-                        'class' => 'btn btn-primary mt-3'
-                    )
-                )
-            )
-            ->getForm();
-
-        
-        $form->handleRequest($request);
+        // Get Create Form
+        $mod = CreateEditForm::getForm($this, $part, $request);
+        $form = $mod['form'];
 
         // When form is submitted and is valid
         if($form->isSubmitted() && $form->isValid()) {
 
-            // Set submitted data
-            $computerPart = $form->getData();
-
-            // Set image upload path
-            $directory = $this->get('kernel')->getProjectDir() . '/public/images/uploads/';
-
-            // Assign Picture Data
-            $file = $form['productPicture']->getData();
-
-            // Store original filename
-            $part->setProductPicture($file->getClientOriginalName());
-
-            if ($file instanceof UploadedFile) {
-                $fileName = $part->getProductPicture();
-
-                // Move to directory location
-                $file->move($directory, $fileName);
-                
-                // Save Filename as Picture Value
-                $part->setProductPicture($fileName);
-            }
-            
-            // Save to database
-            $entityManager = $this->getDoctrine()->getManager();
-            $entityManager->persist($computerPart);
-            $entityManager->flush();
-            //
+            // Add new item
+            CreateEditForm::addEditPart($this, $mod);
 
             // Redirect to Product list
             return $this->redirectToRoute('product_list');
+
         }
 
         return $this->render('computer_parts/newComponent.html.twig', 
             array(
-                'form' => $form->createView(),
+                'form' => $mod['form']->createView(),
             )
         );
     }
@@ -177,99 +71,19 @@ class ComputerPartsController extends Controller
         // Get Selected Product from Database
         $part = $this->getDoctrine()->getRepository(ComputerParts::class)->find($id);
 
-        $form = $this->createFormBuilder($part)
-        
-            // Product Name Field
-            ->add('productName', TextType::class, 
-                array(
-                    'label' => 'Name', 
-                    'required' => true,
-                    'attr'=> array(
-                        'class' => 'form-control'
-                    )
-                )
-            )
-        
-            // Product Price Field
-            ->add('productPrice', TextType::class,
-                array(
-                    'label' => 'Price', 
-                    'required' => true,
-                    'attr' => array(
-                        'class' => 'form-control'
-                    )
-                )
-            )
-        
-            // Product Description Field
-            ->add('productDescription', TextareaType::class,
-                array(
-                    'label' => 'Description', 
-                    'required' => true,
-                    'attr' => array(
-                        'class' => 'form-control'
-                    )
-                )
-            )
-        
-            // Product Picture Field
-            ->add('productPicture', FileType::class, 
-                array(
-                    'label' => 'Picture', 
-                    'data_class' => null,
-                    'required' => false,
-                    'attr' => array(
-                        'class' => 'form-control'
-                    )
-                )
-            )
-        
-            // Product Save Button
-            ->add('save', SubmitType::class,
-                array(
-                    'label' => 'Save', 
-                    'attr' => array(
-                        'class' => 'btn btn-primary mt-3'
-                    )
-                )
-            )
-            ->getForm();
-
-        $form->handleRequest($request);
+        // Get Edit Form
+        $mod = CreateEditForm::getForm($this, $part, $request);
+        $form = $mod['form'];
 
         // When form is submitted and is valid
         if($form->isSubmitted() && $form->isValid()) {
 
-            // Set submitted data
-            $computerPart = $form->getData();
-
-            // Set image upload path
-            $directory = $this->get('kernel')->getProjectDir() . '/public/images/uploads/';
-
-            // Assign Picture Data
-            $file = $form['productPicture']->getData();
-
-            // Store original filename
-            $part->setProductPicture($file->getClientOriginalName());
-
-            if ($file instanceof UploadedFile) {
-                $fileName = $part->getProductPicture();
-
-                // Move to directory location
-                $file->move($directory, $fileName);
-                
-                // Save Filename as Picture Value
-                $part->setProductPicture($fileName);
-            }
-            
-            // Save to database
-            $entityManager = $this->getDoctrine()->getManager();
-            $entityManager->persist($computerPart);
-            $entityManager->flush();
-            //
+            // Update product
+            CreateEditForm::addEditPart($this, $mod);
 
             // Redirect to Product list
             return $this->redirectToRoute('product_list');
+
         }
 
         return $this->render('computer_parts/editComponent.html.twig', 
@@ -291,9 +105,10 @@ class ComputerPartsController extends Controller
 
         return $this->render('computer_parts/showDetails.html.twig',
             array(
-                'part' => $part
+                'part' => $part,
             )
         );
+
     }
 
 
@@ -304,6 +119,9 @@ class ComputerPartsController extends Controller
 
         // Get product from database via id
         $part = $this->getDoctrine()->getRepository(ComputerParts::class)->find($id);
+
+        // $filesystem = new Filesystem();
+        // $filesystem->remove($request->getPathInfo() . '/' . $part['productpicture']);
 
         // Delete selected product via id 
         $entityManager = $this->getDoctrine()->getManager();
