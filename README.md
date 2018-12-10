@@ -23,23 +23,23 @@ Steps needed to setup the solution and dependencies.
 
 Steps needed to run the test suite.
 ---
-**To run individual tests:**
+### To run individual tests:
 
-NOTE that I don't think "testAddProduct" & "testEditProduct" is submitting properly.
+**NOTE** that I don't think "testAddProduct" & "testEditProduct" is submitting properly.
 
-**Get Product Detail**
+### Get Product Detail
 
 ./bin/phpunit tests/UserTestFunctionalTest.php --filter testShowProductDetail
 
-**Add Product**
+### Add Product
 
 ./bin/phpunit tests/UserTestFunctionalTest.php --filter testAddProduct
 
-**Edit Product**
+### Edit Product
 
 ./bin/phpunit tests/UserTestFunctionalTest.php --filter testEditProduct
 
-**Delete Product**
+### Delete Product
 
 ./bin/phpunit tests/UserTestFunctionalTest.php --filter testDeleteProduct
 
