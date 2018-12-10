@@ -15,7 +15,7 @@ class UserTestFunctionalTest extends WebTestCase
 
     public function testShowProductDetail() {
         $client = static::createClient();
-        $client->request('GET', '/product-details/27');
+        $client->request('GET', '/product-details/16');
         $this->assertEquals(200, $client->getResponse()->getStatusCode());
     }
 
@@ -26,7 +26,7 @@ class UserTestFunctionalTest extends WebTestCase
         $crawler = $client->request('GET', '/product-create');
         $this->assertEquals('App\Controller\ComputerPartsController::newComponent', $client->getRequest()->attributes->get('_controller'));
 
-        $form = $crawler->selectButton('Create')->form();
+        $form = $crawler->selectButton('Save')->form();
 
         $form['form[productName]']          = 'Test Product Name';
         $form['form[productPrice]']         = '5';
@@ -63,8 +63,8 @@ class UserTestFunctionalTest extends WebTestCase
     public function testDeleteProduct() {
         $client = static::createClient();
 
-        // Deletes Record id 27
-        $crawler = $client->request('DELETE', '/delete/27');
+        // Deletes Record id 16
+        $crawler = $client->request('DELETE', '/delete/16');
 
         $this->assertEquals('App\Controller\ComputerPartsController::deleteRecord', $client->getRequest()->attributes->get('_controller'));
     }
