@@ -23,10 +23,6 @@ Steps needed to setup the solution and dependencies.
 
 Steps needed to run the test suite.
 ---
-**To run all tests:**
-
-./bin/phpunit tests/UserTestFunctionalTest.php
-
 **To run individual tests:**
 
 NOTE that I don't think "testAddProduct" & "testEditProduct" is submitting properly.
@@ -50,7 +46,7 @@ NOTE that I don't think "testAddProduct" & "testEditProduct" is submitting prope
 
 Time taken to complete the test.
 ---
-Only had 25/11/2018 (Sunday) and 26/11/2018 (Monday) to do this and spent around 16 hours.
+Spent around 16 hours.
 
 
 Any compromises/shortcuts you made due to time considerations.
